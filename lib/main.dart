@@ -1,8 +1,5 @@
 import 'package:adr_timesheet/pages/time_entry_page.dart';
 import 'package:flutter/material.dart';
-//import 'models/counter_storage.dart';
-//import 'pages/downloads_path_provider.dart';
-
 
 void main() {
   runApp(MyApp());
@@ -21,8 +18,7 @@ class MyApp extends StatelessWidget {
          visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: TimeEntryPage()
-      //DownloadsPathProviderApp(storage: CounterStorage(),)
-      // FlutterDemo(storage: CounterStorage()),
+
     );
   }
 

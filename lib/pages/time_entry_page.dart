@@ -19,9 +19,6 @@ class _TimeEntryPageState extends State<TimeEntryPage> {
                             builder: (context) =>TimeAddPage(date: _selectedDate,uref: _uref)));
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

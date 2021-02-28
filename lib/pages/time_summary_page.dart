@@ -45,16 +45,28 @@ Widget build(BuildContext context) {
         }
           return ListView.separated(
               itemBuilder: (context, index){
-                return ListTile(
-                  leading: Text('${snapshot.data[index].id}'),
-                  title: Text('${snapshot.data[index].date}',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  subtitle: Text('${snapshot.data[index].hours}:'
-                      '${snapshot.data[index].minutes<10 ? '0${snapshot.data[index].minutes}':'${snapshot.data[index].minutes}'}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                return Dismissible(
+                  key: UniqueKey(),
+                  onDismissed: (direction) async {
+                    setState(() {
+                      snapshot.data.remove(index);
+                     });
+                    await dbHelper.delete(snapshot.data[index].id);
+                    Scaffold.of(context)
+                        .showSnackBar(SnackBar(content: Text('${snapshot.data[index].date} dismissed')));
+
+                  },
+                  background: Container(color: Colors.red,),
+                  child: ListTile(
+                    //leading: Text('${snapshot.data[index].id}'),
+                    leading: Icon(Icons.timelapse_outlined),
+                    title: Text('${snapshot.data[index].date}',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    subtitle: Text('${snapshot.data[index].hours}:'
+                        '${snapshot.data[index].minutes<10 ? '0${snapshot.data[index].minutes}':'${snapshot.data[index].minutes}'}',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+
                   ),
-                  onLongPress: (){ setState(() {
-                    dbHelper.delete(snapshot.data[index].id);
-                  }); }
                 );
               },
               separatorBuilder: (BuildContext content, int index)=>Divider(color: Colors.orange),
@@ -62,31 +74,6 @@ Widget build(BuildContext context) {
         }
     ));
   }
-
-
-
-
 }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text('Timesheet Summary'),
-  //       ),
-  //     body: ListView.separated(
-  //         itemBuilder: (context, index){
-  //           return ListTile(
-  //             leading: Text('${myTime[index].id}'),
-  //             title: Text('${myTime[index].date}',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-  //             subtitle: Text('${myTime[index].hours}:'
-  //                 '${myTime[index].minutes<10 ? '0${myTime[index].minutes}':'${myTime[index].minutes}'}',
-  //             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
-  //             ),
-  //           );
-  //         },
-  //         separatorBuilder: (BuildContext content, int index)=>Divider(color: Colors.orange),
-  //         itemCount: myTime.length),
-  //   );
-  // }
 
