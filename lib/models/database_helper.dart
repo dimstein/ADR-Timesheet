@@ -1,9 +1,10 @@
+import 'package:adr_timesheet/models/timesheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  static final _databaseName = 'MyDatabase.db';
+  static final _databaseName = 'MyTimesheet.db';
   static final _databaseVersion = 1;
 
   static final table = 'my_table';
@@ -56,12 +57,48 @@ class DatabaseHelper {
     return await db.insert(table, row);
   }
 
+  Future<int> insertTime(Timesheet timesheet) async{
+    final db = await instance.database;
+    return db.insert(table, timesheet.toMap());
+  }
+
+  Future<int> updateTime(Timesheet timesheet)async{
+    final db = await instance.database;
+    return db.update(table, timesheet.toMap(),where: '$columnId = ?', whereArgs: [timesheet.id]);
+  }
+
+  Future<int> checkDate(Timesheet timesheet) async{
+    final db = await instance.database;
+    final idCheck = await db.query(table, where: 'date = ?', whereArgs: [timesheet.date]);
+    return idCheck.isNotEmpty ? idCheck.first['_id'] : null;
+  }
+
+
+
 // All of the rows are returned as a list of maps, where each map is
 // a key-value list of columns.
   Future<List<Map<String, dynamic>>> queryAllRows() async {
     final db = await instance.database;
     return await db.query(table);
   }
+
+  Future<List<Timesheet>> grabAllTime() async{
+    final db = await instance.database;
+    final maps = await db.query(table,
+        where: '_id > ?',
+        whereArgs: [0]
+    );
+    return List.generate(maps.length, (i) =>
+        Timesheet(
+          id: maps[i]['_id'],
+          date: maps[i]['date'],
+          hours: maps[i]['hours'],
+          minutes: maps[i]['minutes']
+        )
+    );
+  }
+
+
 
   Future<int> update(Map<String, dynamic> row) async{
     final db = await instance.database;

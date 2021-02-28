@@ -13,26 +13,11 @@ class _TimeEntryPageState extends State<TimeEntryPage> {
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args){
      final _selectedDate = DateFormat('E, dd MMM yyyy').format(args.value).toString();
-    //setState(() {
-      showDialog(context: context,
-        child: SimpleDialog(
-          title: Text('Date: $_selectedDate'),
-          children: [
-
-            Center(
-                child: SimpleDialogOption(child: Text('Add Time'),
-                  onPressed: (){
-                    Navigator.push(
-                        context,
+     final _uref = int.parse(DateFormat('yyyyMMdd').format(args.value));
+         Navigator.push(context,
                         MaterialPageRoute(
-                            builder: (context) =>TimeAddPage(date: _selectedDate,)));
-                  },
-                ),
-            ),
-
-          ],
-     ));
-   }
+                            builder: (context) =>TimeAddPage(date: _selectedDate,uref: _uref)));
+  }
 
 
 
