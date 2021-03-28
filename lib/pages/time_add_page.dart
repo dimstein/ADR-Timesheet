@@ -1,9 +1,9 @@
+import 'package:adr_timesheet/main.dart';
 import 'package:adr_timesheet/models/database_helper.dart';
 import 'package:adr_timesheet/models/timesheet.dart';
-import 'package:adr_timesheet/pages/time_summary_page.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-
+import 'package:intl/intl.dart';
 
 class TimeAddPage extends StatefulWidget {
 
@@ -17,83 +17,99 @@ class TimeAddPage extends StatefulWidget {
 }
 
 class _TimeAddPageState extends State<TimeAddPage> {
-
   final dbHelper = DatabaseHelper.instance;
 
   int hours=8;
   int minutes=0;
+  String _date;
+  int _uref;
 
-void _submitTime() async{
-  final id = await dbHelper.checkDate(Timesheet(date: widget.date));
+@override
+  void initState() {
 
-  if(id==null){
-    await dbHelper.insertTime(
-        Timesheet(id: widget.uref,date: widget.date,hours: hours, minutes: minutes));
-  }else{
-    await dbHelper.updateTime(
-      Timesheet(id: id,date: widget.date,hours: hours, minutes: minutes));
+    setState(() {
+      if(widget.date==null){
+        _date=DateFormat('E, dd MMM yyyy').format(DateTime.now()).toString();
+      }else{
+        _date=widget.date;
+      }
+      _uref=widget.uref;
+          });
+    super.initState();
   }
 
+  void _submitTime() async{
+    final id = await dbHelper.checkDate(Timesheet(date: _date));
 
+    if(id==null){
+      await dbHelper.insertTime(
+        Timesheet(id: _uref, date: _date,hours: hours, minutes: minutes));
+  }else{
+    await dbHelper.updateTime(
+      Timesheet(id: id,date: _date,hours: hours, minutes: minutes));
+  }
   await Navigator.push(context, MaterialPageRoute(
-          builder: (context)=>TimeSummaryPage()));
+           builder: (context)=>MyNavigationBar(selectedPageIndex: 1,uref: _uref)));
 }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Time Entry'),
-      ),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [Text('Hour', style: TextStyle(fontWeight: FontWeight.bold),),
-                  NumberPicker.integer(
-                      initialValue: hours,
-                      decoration: BoxDecoration(
-                        border: Border(
-                            right: BorderSide(style: BorderStyle.solid,color: Colors.grey),
-                            left: BorderSide(style: BorderStyle.solid,color: Colors.grey),
-                        )
-                      ),
-                      minValue: 0,
-                      maxValue: 13,
-                      selectedTextStyle: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green),
-                      infiniteLoop: true,
-                      onChanged: (value)=> setState(() =>hours=value )),
-                ],
-              ),
-              Column(
-                children: [Text('Minutes', style: TextStyle(fontWeight: FontWeight.bold),),
-                  NumberPicker.integer(
-                      initialValue: minutes,
-                      decoration: BoxDecoration(
-                          border: Border(
-                            right: BorderSide(style: BorderStyle.solid,color: Colors.grey),
-                            left: BorderSide(style: BorderStyle.solid,color: Colors.grey),
-                          )
-                      ),
-                      minValue: 0,
-                      maxValue: 59,
-                      selectedTextStyle: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green),
-                      infiniteLoop: true,
-                      onChanged: (value)=> setState(() =>minutes=value )),
-                ],
-              ),
-            ],
+    return MaterialApp(debugShowCheckedModeBanner: false,
+      home: SingleChildScrollView(
+        child: Card(color: Colors.grey[300],
+          child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [Text('Hour', style: TextStyle(fontWeight: FontWeight.bold),),
+                        NumberPicker.integer(
+                            initialValue: hours,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                  right: BorderSide(style: BorderStyle.solid,color: Colors.grey),
+                                  left: BorderSide(style: BorderStyle.solid,color: Colors.grey),
+                              )
+                            ),
+                            minValue: 0,
+                            maxValue: 13,
+                            selectedTextStyle: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green),
+                            infiniteLoop: true,
+                            onChanged: (value)=> setState(() =>hours=value )),
+                      ],
+                    ),
+                    Column(
+                      children: [Text('Minutes', style: TextStyle(fontWeight: FontWeight.bold),),
+                        NumberPicker.integer(
+                            initialValue: minutes,
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  right: BorderSide(style: BorderStyle.solid,color: Colors.grey),
+                                  left: BorderSide(style: BorderStyle.solid,color: Colors.grey),
+                                )
+                            ),
+                            minValue: 0,
+                            maxValue: 59,
+                            selectedTextStyle: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green),
+                            infiniteLoop: true,
+                            onChanged: (value)=> setState(() =>minutes=value )),
+                      ],
+                    ),
+                  ],
+                ),
+                Text('$_date,', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                  Text('Time: $hours:${minutes<10 ? '0$minutes' : minutes}',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+                ElevatedButton.icon(
+                    onPressed: _submitTime,
+                    icon: Icon(Icons.add_circle_outlined, size: 40,),
+                    label: Text('Add to Database'))
+              ],
+
           ),
-          Text('${widget.date}, ', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-            Text('Time: $hours:${minutes<10 ? '0$minutes' : minutes}',
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),)
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: _submitTime,
         ),
+      ),
     );
   }
 }
