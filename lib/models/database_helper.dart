@@ -58,11 +58,15 @@ class DatabaseHelper {
   }
 
   Future<int> insertTime(Timesheet timesheet) async {
+    print('insertTime being entered into');
+    //List<Timesheet> timesheet;
+   // timesheet.add(Timesheet(id: uref, date: timesheetNoId.date, hours: timesheetNoId.hours, minutes: timesheetNoId.minutes));
     final db = await instance.database;
     return db.insert(table, timesheet.toMap());
   }
 
   Future<int> updateTime(Timesheet timesheet) async {
+    print('updateTime being entered into');
     final db = await instance.database;
     return db.update(table, timesheet.toMap(),
         where: '$columnId = ?', whereArgs: [timesheet.id]);
@@ -94,22 +98,32 @@ class DatabaseHelper {
             minutes: maps[i]['minutes']));
   }
 
-  Future<int> update(Map<String, dynamic> row) async {
-    final db = await instance.database;
-    int id = row[columnId];
-    return await db.update(table, row, where: '$columnId = ?', whereArgs: [id]);
-  }
+  // Future<int> update(Map<String, dynamic> row) async {
+  //
+  //   final db = await instance.database;
+  //   int id = row[columnId];
+  //   return await db.update(table, row, where: '$columnId = ?', whereArgs: [id]);
+  // }
 
   Future<int> delete(int id) async {
     final db = await instance.database;
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
 
-  // Future<int> queryRowCount() async {
-  //   var db = await instance.database;
-  //   return Sqflite.firstIntValue(
-  //       await db.rawQuery('SELECT COUNT(*) FROM $table'));
-  // }
+  void submitted(Timesheet timesheet, int uref){
+      checkDate(timesheet).then((_uref) => _uref==null ?
+    {
+      insertTime(Timesheet(id: uref, date: timesheet.date, hours: timesheet.hours, minutes: timesheet.minutes))
+      // not matching id in database so new id
+    } :
+    {
+      updateTime(Timesheet(id: _uref, date: timesheet.date, hours: timesheet.hours, minutes: timesheet.minutes))
+      // match id found so id is return value from checkDate()
+    });
+
+
+
+  }
 
   Future<int> grabRowsCount() async{
     return grabAllTime().then((timesheet) => timesheet.length);

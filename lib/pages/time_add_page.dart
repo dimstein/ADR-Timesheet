@@ -9,7 +9,6 @@ class TimeAddPage extends StatefulWidget {
 
   final String date;
   final int uref;
-
   const TimeAddPage({Key key, this.date, this.uref}) : super(key: key);
 
   @override
@@ -22,34 +21,23 @@ class _TimeAddPageState extends State<TimeAddPage> {
   int hours=8;
   int minutes=0;
   String _date;
-  int _uref;
 
 @override
   void initState() {
-
+  super.initState();
     setState(() {
-      if(widget.date==null){
-        _date=DateFormat('E, dd MMM yyyy').format(DateTime.now()).toString();
-      }else{
+      widget.date.isEmpty ?
+        _date=DateFormat('E, dd MMM yyyy').format(DateTime.now()).toString() :
         _date=widget.date;
-      }
-      _uref=widget.uref;
-          });
-    super.initState();
+        });
   }
 
   void _submitTime() async{
-    final id = await dbHelper.checkDate(Timesheet(date: _date));
 
-    if(id==null){
-      await dbHelper.insertTime(
-        Timesheet(id: _uref, date: _date,hours: hours, minutes: minutes));
-  }else{
-    await dbHelper.updateTime(
-      Timesheet(id: id,date: _date,hours: hours, minutes: minutes));
-  }
+   dbHelper.submitted(Timesheet(date: _date,hours: hours, minutes: minutes), widget.uref);
+
   await Navigator.push(context, MaterialPageRoute(
-           builder: (context)=>MyNavigationBar(selectedPageIndex: 1,uref: _uref)));
+           builder: (context)=>MyNavigationBar(selectedPageIndex: 1,uref: widget.uref)));
 }
 
   @override
