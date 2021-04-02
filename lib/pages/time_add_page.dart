@@ -21,23 +21,25 @@ class _TimeAddPageState extends State<TimeAddPage> {
   int hours=8;
   int minutes=0;
   String _date;
+  int _uref;
 
 @override
   void initState() {
   super.initState();
     setState(() {
-      widget.date.isEmpty ?
+      widget.date==null ?
         _date=DateFormat('E, dd MMM yyyy').format(DateTime.now()).toString() :
         _date=widget.date;
+      widget.uref==null ? _uref = int.parse(DateFormat('yyyyMMdd').format(DateTime.now())) : _uref = widget.uref;
         });
   }
 
   void _submitTime() async{
 
-   dbHelper.submitted(Timesheet(date: _date,hours: hours, minutes: minutes), widget.uref);
+   dbHelper.submitted(Timesheet(date: _date,hours: hours, minutes: minutes), _uref);
 
   await Navigator.push(context, MaterialPageRoute(
-           builder: (context)=>MyNavigationBar(selectedPageIndex: 1,uref: widget.uref)));
+           builder: (context)=>MyNavigationBar(selectedPageIndex: 1,uref: _uref)));
 }
 
   @override

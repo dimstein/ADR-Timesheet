@@ -22,14 +22,17 @@ class _TimeSummaryPageState extends State<TimeSummaryPage> {
   void initState() {
     super.initState();
     _uref = widget.uref;
+setState(() {
 
+});
     controller = AutoScrollController(
             viewportBoundaryGetter: () =>
                 Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
             axis: scrollDirection);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToIndex());
-    //_scrollToIndex();
+    //WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToIndex());
+    print('the initState from summary has been called');
+    _scrollToIndex();
   }
 
   @override
@@ -37,8 +40,6 @@ class _TimeSummaryPageState extends State<TimeSummaryPage> {
     controller.dispose();
     super.dispose();
   }
-
-
 
   void _onCardTap(String date, int ref) {
 
@@ -125,12 +126,16 @@ class _TimeSummaryPageState extends State<TimeSummaryPage> {
   Future<void> _scrollToIndex() async {
     final _lastRow = await dbHelper.grabRowsCount();
     final _searchedRow = await dbHelper.grabRowID(_uref);
+    setState(() {
 
+    });
         _uref == null
             ? await controller.scrollToIndex(_lastRow,
                 preferPosition: AutoScrollPosition.end)
             : await controller.scrollToIndex(_searchedRow,
                 preferPosition: AutoScrollPosition.middle);
+
+
 
     }
   

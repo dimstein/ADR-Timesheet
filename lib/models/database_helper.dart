@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adr_timesheet/models/timesheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -59,8 +61,6 @@ class DatabaseHelper {
 
   Future<int> insertTime(Timesheet timesheet) async {
     print('insertTime being entered into');
-    //List<Timesheet> timesheet;
-   // timesheet.add(Timesheet(id: uref, date: timesheetNoId.date, hours: timesheetNoId.hours, minutes: timesheetNoId.minutes));
     final db = await instance.database;
     return db.insert(table, timesheet.toMap());
   }
@@ -86,7 +86,7 @@ class DatabaseHelper {
     return await db.query(table);
   }
 
-  Future<List<Timesheet>> grabAllTime() async {
+  Future<List<Timesheet>> grabAllTime() async{
     final db = await instance.database;
     final maps = await db.query(table, where: '_id > ?', whereArgs: [0]);
     return List.generate(
@@ -98,12 +98,17 @@ class DatabaseHelper {
             minutes: maps[i]['minutes']));
   }
 
-  // Future<int> update(Map<String, dynamic> row) async {
+  // Stream<List<dynamic>> streamAllTime() {
+  //   final streamTime = grabAllTime();
+  //   final controller = StreamController<List<Timesheet>>.broadcast();
+  //   Stream<List<Timesheet>> _inTimesheet => controller.sink;
+  //   controller.stream.listen((event) { })
+  //   return stream;
   //
-  //   final db = await instance.database;
-  //   int id = row[columnId];
-  //   return await db.update(table, row, where: '$columnId = ?', whereArgs: [id]);
   // }
+
+
+
 
   Future<int> delete(int id) async {
     final db = await instance.database;
