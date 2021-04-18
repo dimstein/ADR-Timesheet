@@ -60,13 +60,11 @@ class DatabaseHelper {
   }
 
   Future<int> insertTime(Timesheet timesheet) async {
-    print('insertTime being entered into');
     final db = await instance.database;
     return db.insert(table, timesheet.toMap());
   }
 
   Future<int> updateTime(Timesheet timesheet) async {
-    print('updateTime being entered into');
     final db = await instance.database;
     return db.update(table, timesheet.toMap(),
         where: '$columnId = ?', whereArgs: [timesheet.id]);

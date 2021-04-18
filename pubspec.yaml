@@ -29,13 +29,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   path_provider: ^2.0.1
-  syncfusion_flutter_datepicker: ^18.4.44-beta
-  numberpicker: ^1.3.0
+  syncfusion_flutter_datepicker: ^19.1.56-beta
+  numberpicker: ^2.1.1
   sqflite: ^2.0.0+2
   scroll_to_index: ^2.0.0
-  http: ^0.12.2
+  http: ^0.13.1
   shared_preferences: ^2.0.5
-  flutter_native_splash: ^0.3.2
+  flutter_native_splash: ^1.1.7+1
 
 
 

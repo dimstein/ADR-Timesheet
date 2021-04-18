@@ -54,8 +54,8 @@ class _TimeAddPageState extends State<TimeAddPage> {
                   children: [
                     Column(
                       children: [Text('Hour', style: TextStyle(fontWeight: FontWeight.bold),),
-                        NumberPicker.integer(
-                            initialValue: hours,
+                        NumberPicker(
+                            value: hours,
                             decoration: BoxDecoration(
                               border: Border(
                                   right: BorderSide(style: BorderStyle.solid,color: Colors.grey),
@@ -71,8 +71,8 @@ class _TimeAddPageState extends State<TimeAddPage> {
                     ),
                     Column(
                       children: [Text('Minutes', style: TextStyle(fontWeight: FontWeight.bold),),
-                        NumberPicker.integer(
-                            initialValue: minutes,
+                        NumberPicker(
+                            value: minutes,
                             decoration: BoxDecoration(
                                 border: Border(
                                   right: BorderSide(style: BorderStyle.solid,color: Colors.grey),
