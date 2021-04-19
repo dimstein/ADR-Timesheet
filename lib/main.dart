@@ -29,10 +29,10 @@ class MyApp extends StatelessWidget {
   class MyNavigationBar extends StatefulWidget {
 
   final int selectedPageIndex;
-  final String date;
-  final int uref;
+  final String? date;
+  final int? uref;
 
-  const MyNavigationBar({Key key, this.selectedPageIndex=0,
+  const MyNavigationBar({Key? key, this.selectedPageIndex=0,
      this.date, this.uref}) : super(key: key);
 
     @override

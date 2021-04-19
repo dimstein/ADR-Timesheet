@@ -22,10 +22,10 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
 //only have a single app-wide reference to database
-  static Database _database;
+  static Database? _database;
 
-  Future<Database> get database async {
-    if (_database != null) return _database;
+  Future<Database?> get database async {
+    //if (_database != null) return _database;
     _database = await _initDatabase();
     return _database;
   }
@@ -56,44 +56,44 @@ class DatabaseHelper {
   // inserted row.
   Future<int> insert(Map<String, dynamic> row) async {
     final db = await instance.database;
-    return await db.insert(table, row);
+    return await db!.insert(table, row);
   }
 
   Future<int> insertTime(Timesheet timesheet) async {
     final db = await instance.database;
-    return db.insert(table, timesheet.toMap());
+    return db!.insert(table, timesheet.toMap());
   }
 
   Future<int> updateTime(Timesheet timesheet) async {
     final db = await instance.database;
-    return db.update(table, timesheet.toMap(),
+    return db!.update(table, timesheet.toMap(),
         where: '$columnId = ?', whereArgs: [timesheet.id]);
   }
 
-  Future<int> checkDate(Timesheet timesheet) async {
+  Future<int?> checkDate(Timesheet timesheet) async {
     final db = await instance.database;
     final idCheck =
-        await db.query(table, where: 'date = ?', whereArgs: [timesheet.date]);
-    return idCheck.isNotEmpty ? idCheck.first['_id'] : null;
+        await db!.query(table, where: 'date = ?', whereArgs: [timesheet.date]);
+    return idCheck.isNotEmpty ? idCheck.first['_id'] as FutureOr<int?> : null;
   }
 
 // All of the rows are returned as a list of maps, where each map is
 // a key-value list of columns.
   Future<List<Map<String, dynamic>>> queryAllRows() async {
     final db = await instance.database;
-    return await db.query(table);
+    return await db!.query(table);
   }
 
   Future<List<Timesheet>> grabAllTime() async{
     final db = await instance.database;
-    final maps = await db.query(table, where: '_id > ?', whereArgs: [0]);
+    final maps = await db!.query(table, where: '_id > ?', whereArgs: [0]);
     return List.generate(
         maps.length,
         (i) => Timesheet(
-            id: maps[i]['_id'],
-            date: maps[i]['date'],
-            hours: maps[i]['hours'],
-            minutes: maps[i]['minutes']));
+            id: maps[i]['_id'] as int?,
+            date: maps[i]['date'] as String?,
+            hours: maps[i]['hours'] as int?,
+            minutes: maps[i]['minutes'] as int?));
   }
 
   // Stream<List<dynamic>> streamAllTime() {
@@ -108,12 +108,12 @@ class DatabaseHelper {
 
 
 
-  Future<int> delete(int id) async {
+  Future<int> delete(int? id) async {
     final db = await instance.database;
-    return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
+    return await db!.delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
 
-  void submitted(Timesheet timesheet, int uref){
+  void submitted(Timesheet timesheet, int? uref){
       checkDate(timesheet).then((_uref) => _uref==null ?
     {
       insertTime(Timesheet(id: uref, date: timesheet.date, hours: timesheet.hours, minutes: timesheet.minutes))
@@ -132,7 +132,7 @@ class DatabaseHelper {
     return grabAllTime().then((timesheet) => timesheet.length);
   }
 
-  Future<int> grabRowID(int query) async {
+  Future<int> grabRowID(int? query) async {
     return grabAllTime().then(
         (timesheet) => timesheet.indexWhere((element) => element.id == query));
   }

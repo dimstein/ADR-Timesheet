@@ -33,7 +33,8 @@ class _TimeCalendarPageState extends State<TimeCalendarPage> {
                   onSelectionChanged: _onSelectionChanged,
                   backgroundColor: Colors.grey[200],
                  selectionColor: Colors.green,
-                 ),
+            headerHeight: 50,
+            ),
                ),
     );
   }

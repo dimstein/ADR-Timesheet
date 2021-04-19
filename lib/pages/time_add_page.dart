@@ -7,9 +7,9 @@ import 'package:intl/intl.dart';
 
 class TimeAddPage extends StatefulWidget {
 
-  final String date;
-  final int uref;
-  const TimeAddPage({Key key, this.date, this.uref}) : super(key: key);
+  final String? date;
+  final int? uref;
+  const TimeAddPage({Key? key, this.date, this.uref}) : super(key: key);
 
   @override
   _TimeAddPageState createState() => _TimeAddPageState();
@@ -20,8 +20,8 @@ class _TimeAddPageState extends State<TimeAddPage> {
 
   int hours=8;
   int minutes=0;
-  String _date;
-  int _uref;
+  String? _date;
+  int? _uref;
 
 @override
   void initState() {

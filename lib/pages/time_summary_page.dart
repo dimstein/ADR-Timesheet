@@ -57,68 +57,68 @@ setState(() {
       debugShowCheckedModeBanner: false,
       home: RefreshIndicator(onRefresh: _scrollToIndex,
         child: FutureBuilder(
-            initialData: [Timesheet(id: 9999999, date: 'date', hours: 1, minutes: 1)],
+            initialData: [Timesheet(id: 1, date: 'date', hours: 1, minutes: 1)],
             future: dbHelper.grabAllTime(),
             builder: (context, AsyncSnapshot<List<Timesheet>> snapshot) {
               if (snapshot.connectionState == ConnectionState.none &&
                   !snapshot.hasData) {
                 return Container(child: CircularProgressIndicator());
               }
-              return SafeArea(
-                child: ListView.separated(
-                  scrollDirection: scrollDirection,
-                  controller: controller,
-                  itemBuilder: (context, index) {
-                    return Dismissible(
+              return ListView.separated(
+                scrollDirection: scrollDirection,
+                controller: controller,
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    key: UniqueKey(),
+                    onDismissed: (direction) async {
+                      setState(() {
+                        snapshot.data!.remove(index);
+                      });
+                      await dbHelper.delete(snapshot.data![index].id!);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text('${snapshot.data![index].date} dismissed')));
+                      // Scaffold.of(context)
+                      // .showSnackBar(SnackBar(content: Text('${snapshot.data[index].date} dismissed')));
+                    },
+                    background: Container(
+                      color: Colors.red[200],
+                    ),
+                    child: AutoScrollTag(
                       key: UniqueKey(),
-                      onDismissed: (direction) async {
-                        setState(() {
-                          snapshot.data!.remove(index);
-                        });
-                        await dbHelper.delete(snapshot.data![index].id!);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content:
-                                Text('${snapshot.data![index].date} dismissed')));
-                        // Scaffold.of(context)
-                        // .showSnackBar(SnackBar(content: Text('${snapshot.data[index].date} dismissed')));
-                      },
-                      background: Container(
-                        color: Colors.red[200],
-                      ),
-                      child: AutoScrollTag(
-                        key: UniqueKey(),
-                        controller: controller!,
-                        index: index,
+                      controller: controller!,
+                      index: index,
 
-                        child: Card(
-                          key: Key('summary'),
-                          child: ListTile(
-                            leading: Text('${snapshot.data![index].id!}'),
-                            //leading: Icon(Icons.timelapse_outlined),
-                            title: Text('${snapshot.data![index].date!}',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
-                            subtitle: Text(
-                              '${snapshot.data![index].hours!}:'
-                              '${snapshot.data![index].minutes! < 10 ? '0${snapshot.data![index].minutes!}' : '${snapshot.data![index].minutes!}'}',
+                      child: Card(
+                        key: Key('summary'),
+                        child: ListTile(
+                          //leading: Text('${snapshot.data![index].id!}'),
+                          leading: Icon(Icons.timelapse_outlined),
+                          title: Text('${snapshot.data![index].date!}',
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                            ),
-                            trailing: Text('$index'),
-                            onTap: () => _onCardTap(
-                                snapshot.data![index].date!, snapshot.data![index].id!),
-                            ),
-                        ),
+                                  fontSize: 25, fontWeight: FontWeight.bold)),
+                          subtitle: Text(
+                            '${snapshot.data![index].hours!}:'
+                            '${snapshot.data![index].minutes! < 10 ?
+                              '0${snapshot.data![index].minutes!}       [hh:mm]'
+                                : '${snapshot.data![index].minutes!}      [hh:mm]'}',
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                          ),
+                          //trailing: Text('$index'),
+                          onTap: () => _onCardTap(
+                              snapshot.data![index].date!, snapshot.data![index].id!),
+                          ),
                       ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext content, int index) =>
-                      Divider(color: Colors.orange),
-                  itemCount: snapshot.data!.length,
+                    ),
+                  );
+                },
+                separatorBuilder: (BuildContext content, int index) =>
+                    Divider(color: Colors.orange),
+                itemCount: snapshot.data!.length,
 
-                ),
               );
             }
             ),
